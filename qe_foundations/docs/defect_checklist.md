@@ -11,10 +11,10 @@ check_exercise.py compares this table with what your queries return.
 
 | Rule | Defects found (run_ids) | Predicted (before running) | Notes / surprises |
 |---|---|---|---|
-| R-01 | | | |
-| R-02 | | | |
-| R-03 | | | |
-| R-04 | | | |
+| R-01 | 5006, 5019, 5025 | 5006, 5019, 5025 | |
+| R-02 | 5011, 5022 | 5011, 5022 | |
+| R-03 | 5008, 5014, 5027, 5029 | 5008, 5027, 5029 | 5014 must have extra spaces, we didn't expect it|
+| R-04 | 5009, 5016 | 5009, 5016 | |
 | R-05 | | | |
 | R-06 | | | |
 | R-07 | | | |
