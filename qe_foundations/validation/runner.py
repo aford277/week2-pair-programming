@@ -130,8 +130,33 @@ def setup_logging(log_file: Path = DEFAULT_LOG_FILE) -> logging.Logger:
         "duplicate log lines" pitfall)
     Hint: Wednesday demo file demos/3-wednesday/code/qa_logging.py.
     """
-    raise NotImplementedError("TODO: implement setup_logging")
+    logger = logging.getLogger(LOGGER_NAME)
+    logger.setLevel(logging.DEBUG)
 
+    if logger.handlers:
+        return logger
+
+    # Create the log file directory if it doesn't exist
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Create handlers
+    console_handler = logging.StreamHandler()
+    file_handler = logging.FileHandler(log_file, encoding="utf-8")
+
+    # Set levels
+    console_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)
+
+    # Create formatter
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+
+    # Add handlers to logger
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    return logger
 
 # ---------------------------------------------------------------- TODO 2: run one rule
 def run_rule(conn: sqlite3.Connection, rule: Rule) -> list:
@@ -142,8 +167,12 @@ def run_rule(conn: sqlite3.Connection, rule: Rule) -> list:
       * if len(rows) == rule.expect -> the rule holds: return the rows
       * otherwise -> raise ValidationFailedError(rule, rows)   (see exceptions.py)
     """
-    raise NotImplementedError("TODO: implement run_rule")
-
+    fetch_columns, rows = fetch_rows(conn, rule.sql)
+    if rule.expect is None:
+        return rows
+    if len(rows) == rule.expect:
+        return rows
+    raise ValidationFailedError(rule, rows)
 
 # ---------------------------------------------------------------- TODO 3: run the whole suite
 def run_all(conn: sqlite3.Connection, rules: List[Rule], logger: logging.Logger) -> List[RuleResult]:
@@ -167,7 +196,36 @@ def run_all(conn: sqlite3.Connection, rules: List[Rule], logger: logging.Logger)
       * finish with a one-line summary: how many PASS / FAIL / INFO
     Return a list with one RuleResult per rule, in file order.
     """
-    raise NotImplementedError("TODO: implement run_all")
+    results = []
+    pass_count = 0
+    fail_count = 0
+    info_count = 0
+
+    for rule in rules:
+        try:
+            rows = run_rule(conn, rule)
+            if rule.expect is None:
+                status = "INFO"
+                info_count += 1
+                logger.info(f"{status}  {rule.rule_id}  {rule.dimension}  {rule.description}  ({len(rows)} row(s))")
+            else:
+                status = "PASS"
+                pass_count += 1
+                logger.info(f"{status}  {rule.rule_id}  {rule.dimension}  {rule.description}")
+        except ValidationFailedError as e:
+            status = "FAIL"
+            fail_count += 1
+            logger.warning(f"{status}  {e.rule_id}  {e.description}  ({len(e.rows)} violating row(s))")
+            for row in e.rows:
+                logger.warning(f"      {row}")
+        except Exception as e:
+            logger.exception(f"Unexpected error while running rule {rule.rule_id}: {e}")
+            raise
+
+        results.append(RuleResult(rule, status, rows if status != "FAIL" else []))
+
+    print(f"\nSummary: {pass_count} PASS / {fail_count} FAIL / {info_count} INFO")
+    return results
 
 
 # ---------------------------------------------------------------- command line (PROVIDED + 1 TODO)
@@ -216,8 +274,11 @@ def main(argv=None) -> int:
     #   2. results = run_all(conn, rules, logger)
     #   3. return 0 if no result has status "FAIL" or args.allow_failures is set,
     #      otherwise return 1   (a non-zero exit code is how CI notices a failure)
-    raise NotImplementedError("TODO: wire up setup_logging, run_all and the exit code")
-
+    logger = setup_logging(Path(args.log_file))
+    results = run_all(conn, rules, logger)
+    if any(result.status == "FAIL" for result in results) and not args.allow_failures:
+        return 1
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
