@@ -26,15 +26,16 @@ check_exercise.py compares this table with what your queries return.
 
 ## Decoys: rows that look odd but are LEGAL (we must not flag them)
 
-<!-- List at least two run_ids and say why they are fine, e.g. "run 5xxx: SKIPPED with 0 ms -- skipped tests take no time." -->
+5042 looks odd since the duration is 0. But it's on a skipped run so it's ok.
+5041 looks bad since it is exactly 600000 ms but that's the exact stopping point so it is ok
 
 
 ## Rows reported by more than one rule
 
-<!-- Which run_ids appear in two or more rules? Is that OK? (Each rule must be testable on its own.) -->
+5014 does. That could be bad since rules should be all on their own.
+The reason is R-03 checks the status to find an exact match and R-08 also checks if there is any trailing spaces.
 
 
 ## Open questions for the product owner
 
-<!-- Rules that are really business decisions (like "is a price of 0 allowed?" in the lesson). -->
-
+Is R-02 strict enough? 

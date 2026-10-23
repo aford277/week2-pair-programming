@@ -22,27 +22,27 @@ script counts the rows that are filled in; a 3-hour session has 5 driving blocks
 
 | | Name | Git user.name (as shown by `git log`) | Machine / repo owner |
 |---|---|---|---|
-| Partner A | | | |
-| Partner B | | | |
+| Partner A | Aiden | aford277 | Aiden |
+| Partner B | Kevin | KevinKhangNguyen| Aiden |
 
-Branch: `feature/sql-validation-...`        Remote: ...
+Branch: `feature/sql-validation-...`        Remote: `https://github.com/aford277/week2-pair-programming`
 
 ## Swap log (one row per block)
 
 | Block | Clock time | Driver | Navigator | Goal of the block | Result (rules done, commit hash) | Predictions: right / wrong |
 |---|---|---|---|---|---|---|
-| 1 | | | | | | |
-| 2 | | | | | | |
-| 3 | | | | | | |
-| 4 | | | | | | |
-| 5 | | | | | | |
+| 1 | 1:00 | Aiden | Kevin | Finish R-01 to R-04 | Finished them all, 5f17f57 | Mostly right |
+| 2 | 1:30 | Kevin | Aiden | Finish R-05 to R-08 | Got it done, cc2da16 | Mostly right|
+| 3 | 2:30 | Aiden | Kevin | Finish rest of rules| R-09 to E-02, 5234b0f | Right|
+| 4 | 3:30 | Kevin | Aiden | runner.py file done | Finished, a1edb6a | N/A |
+| 5 | 1:30 next day | Aiden | Kevin | Finish test cases | Finished, a010889 | N/A |
 
 ## Disagreements and how we settled them
 
-<!-- At least one honest example: what did you disagree about (query style, a rule's meaning, ...), and how did you decide? -->
+We didn't agree on which defects were the most severe and should be written in the report. We decided we would each do one so that we could both get what we needed.
 
 
 ## Hints we used
 
-<!-- Which hint levels, for which rules? (Using hints is fine -- hiding it is not.) -->
+We used the level 3 hints to get the skeleton from the hardest rules
 
