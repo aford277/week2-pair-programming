@@ -207,24 +207,35 @@ def run_all(conn: sqlite3.Connection, rules: List[Rule], logger: logging.Logger)
             if rule.expect is None:
                 status = "INFO"
                 info_count += 1
-                logger.info(f"{status}  {rule.rule_id}  {rule.dimension}  {rule.description}  ({len(rows)} row(s))")
+                line = f"{status}  {rule.rule_id}  {rule.dimension}  {rule.description}  ({len(rows)} row(s))"
+                print(line)
+                logger.info(line)
             else:
                 status = "PASS"
                 pass_count += 1
-                logger.info(f"{status}  {rule.rule_id}  {rule.dimension}  {rule.description}")
+                line = f"{status}  {rule.rule_id}  {rule.dimension}  {rule.description}"
+                print(line)
+                logger.info(line)
         except ValidationFailedError as e:
             status = "FAIL"
             fail_count += 1
-            logger.warning(f"{status}  {e.rule_id}  {e.description}  ({len(e.rows)} violating row(s))")
+            rows = e.rows
+            line = f"{status}  {e.rule_id}  {rule.dimension}  {e.description}  ({len(e.rows)} violating row(s))"
+            print(line)
+            logger.warning(line)
             for row in e.rows:
-                logger.warning(f"      {row}")
+                print(f"      {row}")
+                logger.debug(f"      {row}")
         except Exception as e:
             logger.exception(f"Unexpected error while running rule {rule.rule_id}: {e}")
             raise
 
-        results.append(RuleResult(rule, status, rows if status != "FAIL" else []))
+        results.append(RuleResult(rule, status, rows))
 
-    print(f"\nSummary: {pass_count} PASS / {fail_count} FAIL / {info_count} INFO")
+    summary = f"Summary: {pass_count} PASS, {fail_count} FAIL, {info_count} INFO"
+    print()
+    print(summary)
+    logger.info(summary)
     return results
 
 
